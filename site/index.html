@@ -471,12 +471,18 @@ $("q-clear").onclick = () => {
     // Absolute URLs: the worker resolves the wasm path relative to its own
     // location, so a bare "vendor/…" would become "vendor/vendor/…".
     const abs = (p) => new URL(p, location.href).href;
+    // Fetch the manifest ourselves with no-store and pass it inline, rather
+    // than letting the worker fetch it: this guarantees we read the current
+    // manifest (whose chunk filenames are content-hashed) instead of a stale
+    // cached one paired with mismatched chunks.
+    const cfg = await (await fetch(abs("db/config.json"), {cache: "no-store"})).json();
+    cfg.urlPrefix = abs("db/" + cfg.urlPrefix);
     worker = await createDbWorker(
-      [{from: "jsonconfig", configUrl: abs("db/config.json")}],
+      [{from: "inline", config: cfg}],
       abs("vendor/sqlite.worker.js"),
       abs("vendor/sql-wasm.wasm"),
     );
-    const meta = await (await fetch("db/meta.json")).json();
+    const meta = await (await fetch(abs("db/meta.json"), {cache: "no-store"})).json();
     periods = {months: meta.months, years: meta.years, latest: meta.latest};
     categories = meta.categories;
     fillCategories();

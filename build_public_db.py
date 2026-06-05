@@ -25,6 +25,7 @@ Run it from the repo root:  python build_public_db.py [--src citations.db]
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import shutil
@@ -43,7 +44,6 @@ REQUEST_CHUNK_SIZE = PAGE_SIZE
 # stay well under GitHub's 100 MB hard per-file limit. 24 MiB / 8 KiB = 3072.
 SERVER_CHUNK_SIZE = 24 * 1024 * 1024
 
-CHUNK_PREFIX = "arxiv.sqlite3."
 SUFFIX_LENGTH = 3
 
 
@@ -177,10 +177,24 @@ def _write_meta(db_path: str, out_dir: Path) -> None:
 
 
 def _split(db_path: str, out_dir: Path) -> dict:
-    """Split the DB file into chunk files and return the manifest dict."""
-    # Remove any chunks from a previous build so a smaller DB can't leave stale
-    # high-numbered files behind.
-    for old in out_dir.glob(f"{CHUNK_PREFIX}*"):
+    """Split the DB file into chunk files and return the manifest dict.
+
+    Chunk filenames embed a content hash of the DB (e.g.
+    `arxiv.<hash>.sqlite3.000`). Because the chunks' *contents* change on every
+    rebuild but their offsets/filenames previously did not, a browser or CDN
+    could pair freshly-fetched chunks with cached ones from an older build —
+    which SQLite reports as "database disk image is malformed". A per-build
+    hash in the name makes every build's files cache-distinct, so mixing is
+    impossible.
+    """
+    h = hashlib.sha1()
+    with open(db_path, "rb") as f:
+        for block in iter(lambda: f.read(1 << 20), b""):
+            h.update(block)
+    prefix = f"arxiv.{h.hexdigest()[:10]}.sqlite3."
+
+    # Remove chunks from any previous build (any hash) so they don't pile up.
+    for old in out_dir.glob("arxiv.*.sqlite3.*"):
         old.unlink()
 
     total = os.path.getsize(db_path)
@@ -190,8 +204,7 @@ def _split(db_path: str, out_dir: Path) -> dict:
             chunk = f.read(SERVER_CHUNK_SIZE)
             if not chunk:
                 break
-            name = f"{CHUNK_PREFIX}{index:0{SUFFIX_LENGTH}d}"
-            (out_dir / name).write_bytes(chunk)
+            (out_dir / f"{prefix}{index:0{SUFFIX_LENGTH}d}").write_bytes(chunk)
             index += 1
 
     return {
@@ -199,7 +212,7 @@ def _split(db_path: str, out_dir: Path) -> dict:
         "requestChunkSize": REQUEST_CHUNK_SIZE,
         "databaseLengthBytes": total,
         "serverChunkSize": SERVER_CHUNK_SIZE,
-        "urlPrefix": CHUNK_PREFIX,
+        "urlPrefix": prefix,
         "suffixLength": SUFFIX_LENGTH,
     }
 
