@@ -7,6 +7,23 @@ set **`cs.AI`, `cs.CL`, `cs.LG`**. Citation counts are stored locally in SQLite
 and can be **refreshed on demand**, so you re-run updates as citations
 accumulate.
 
+## License & data sources
+
+The **code** is licensed under the [MIT License](LICENSE). The **data** (the
+SQLite database and its exports — the `citations.db` release asset, the database
+served by the GitHub Pages site, and CSV/JSON outputs) is licensed under
+[CC BY 4.0](LICENSE-DATA) and is a compilation derived from:
+
+| Data | Source | Upstream license |
+|------|--------|------------------|
+| Paper metadata (titles, authors, categories, dates) | arXiv, via the [Kaggle arXiv snapshot](https://www.kaggle.com/datasets/Cornell-University/arxiv) | CC0 1.0 (public domain) |
+| Citation counts | [Semantic Scholar](https://www.semanticscholar.org/product/api) | ODC-BY 1.0 (attribution required) |
+| Social attention scores | [Hacker News](https://hn.algolia.com/api) (Algolia API) | public/factual; attribute HN |
+
+If you redistribute the data, keep attribution to these sources (see
+[LICENSE-DATA](LICENSE-DATA) for details). Citation counts and attention scores
+are point-in-time snapshots and may be incomplete or stale.
+
 ## Install
 
 ```sh

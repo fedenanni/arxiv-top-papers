@@ -1,0 +1,46 @@
+Data license
+============
+
+This license applies to the **data** produced by this project — the SQLite
+database and any of its exports (e.g. the `citations.db` release asset, the
+chunked database served by the GitHub Pages site, and CSV/JSON outputs). The
+source code is licensed separately under the MIT License (see LICENSE).
+
+The compiled database is licensed under the
+**Creative Commons Attribution 4.0 International License (CC BY 4.0)**.
+
+  Full legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+  Summary:         https://creativecommons.org/licenses/by/4.0/
+
+You are free to share and adapt the data for any purpose, including
+commercially, provided you give appropriate credit. A suggested attribution:
+
+  "arXiv top-cited papers dataset by Federico Nanni (CC BY 4.0), derived from
+   arXiv metadata, Semantic Scholar, and Hacker News."
+
+
+Upstream sources and their terms
+--------------------------------
+
+This dataset is a compilation derived from third-party sources. Their terms
+continue to apply to the portions of the data that originate with them; the
+CC BY 4.0 license above covers this compilation. When redistributing, please
+preserve attribution to all of the following:
+
+* arXiv paper metadata (titles, authors, categories, submission dates),
+  obtained via the Kaggle "arXiv Dataset" snapshot.
+    License: CC0 1.0 (public domain dedication).
+    https://www.kaggle.com/datasets/Cornell-University/arxiv
+
+* Citation counts, from Semantic Scholar (the Semantic Scholar Academic Graph).
+    License: ODC-BY 1.0 (Open Data Commons Attribution) — attribution required.
+    https://www.semanticscholar.org/product/api/license
+    "Citation counts courtesy of Semantic Scholar."
+
+* Social attention scores, from Hacker News via the Algolia HN Search API.
+    Public, factual data (story points). Attribution to Hacker News /
+    Y Combinator.
+    https://hn.algolia.com/api
+
+THE DATA IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. Citation counts and
+attention scores are point-in-time snapshots and may be incomplete or stale.
