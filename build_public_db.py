@@ -77,38 +77,56 @@ def _build_public_db(src: str, work: str) -> None:
             """
         )
 
-        # Denormalize primary_category onto the metric tables. This is what
-        # lets a category-filtered ranking read the top-k straight from a
-        # composite index instead of scanning all of `papers` and sorting (the
-        # difference between a few KB and ~67 MB of range requests in the
-        # browser). The default UI selects every category, in which case the
-        # front-end drops the filter and uses the category-free index below.
+        # Denormalize the filter columns (primary_category, year, month) from
+        # papers onto the metric tables. This is the key to staying fast in the
+        # browser: every ranking filter then lives on the same row as the metric
+        # value, so a composite index can seek straight to the top-k. Without
+        # it, a "2024 by citations" query scans the citation index from the top
+        # (checking each paper's month) and, because recent papers have few
+        # citations, ends up reading almost the entire DB over HTTP — it hangs.
         conn.executescript(
             """
             ALTER TABLE citations ADD COLUMN primary_category TEXT;
-            UPDATE citations SET primary_category = (
-                SELECT p.primary_category FROM papers p
-                WHERE p.arxiv_id = citations.arxiv_id);
+            ALTER TABLE citations ADD COLUMN year TEXT;
+            ALTER TABLE citations ADD COLUMN month TEXT;
+            UPDATE citations SET
+                primary_category = p.primary_category,
+                year = substr(p.month, 1, 4),
+                month = p.month
+            FROM papers p WHERE p.arxiv_id = citations.arxiv_id;
+
             ALTER TABLE social ADD COLUMN primary_category TEXT;
-            UPDATE social SET primary_category = (
-                SELECT p.primary_category FROM papers p
-                WHERE p.arxiv_id = social.arxiv_id);
+            ALTER TABLE social ADD COLUMN year TEXT;
+            ALTER TABLE social ADD COLUMN month TEXT;
+            UPDATE social SET
+                primary_category = p.primary_category,
+                year = substr(p.month, 1, 4),
+                month = p.month
+            FROM papers p WHERE p.arxiv_id = social.arxiv_id;
             """
         )
 
         # Access paths for the ranking queries: read the top-k from the metric
-        # in sorted order (optionally within one category), or pull a recent
-        # slice by submission date.
+        # in sorted order, scoped to all-time / a category / a year / a month,
+        # or pull a recent slice by submission date.
         conn.executescript(
             """
             CREATE INDEX idx_citations_count
                 ON citations(citation_count DESC, arxiv_id);
             CREATE INDEX idx_citations_cat
                 ON citations(primary_category, citation_count DESC, arxiv_id);
+            CREATE INDEX idx_citations_year
+                ON citations(year, citation_count DESC, arxiv_id);
+            CREATE INDEX idx_citations_month
+                ON citations(month, citation_count DESC, arxiv_id);
             CREATE INDEX idx_social_score
                 ON social(score DESC, arxiv_id);
             CREATE INDEX idx_social_cat
                 ON social(primary_category, score DESC, arxiv_id);
+            CREATE INDEX idx_social_year
+                ON social(year, score DESC, arxiv_id);
+            CREATE INDEX idx_social_month
+                ON social(month, score DESC, arxiv_id);
             CREATE INDEX idx_papers_submitted
                 ON papers(submitted_at DESC, arxiv_id);
             """

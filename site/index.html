@@ -238,8 +238,11 @@ function metricDrivenQuery(period, cats, top) {
   const cat = categoryClause(a, cats, params);
   if (cat) clauses.push(cat);
   if (period !== "all") {
-    if (/^\d{4}$/.test(period)) { clauses.push("p.month LIKE ?"); params.push(period + "-%"); }
-    else { clauses.push("p.month = ?"); params.push(period); }
+    // Filter on the denormalized year/month columns of the metric table so the
+    // composite index seeks straight to the top-k (filtering on p.month would
+    // force a near-full scan over HTTP).
+    if (/^\d{4}$/.test(period)) { clauses.push(`${a}.year = ?`); params.push(period); }
+    else { clauses.push(`${a}.month = ?`); params.push(period); }
   }
   const where = clauses.length ? "WHERE " + clauses.join(" AND ") : "";
   const sql = `
