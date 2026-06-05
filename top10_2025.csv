@@ -1,0 +1,121 @@
+month,rank,citation_count,title,arxiv_id,url,fetched_at,provisional
+2025-01,1,946,Kimi k1.5: Scaling Reinforcement Learning with LLMs,2501.12599,https://arxiv.org/abs/2501.12599,2026-06-03T20:52:25.866960+00:00,0
+2025-01,2,726,Janus-Pro: Unified Multimodal Understanding and Generation with Data and Model Scaling,2501.17811,https://arxiv.org/abs/2501.17811,2026-06-03T20:52:25.868246+00:00,0
+2025-01,3,582,"SFT Memorizes, RL Generalizes: A Comparative Study of Foundation Model Post-training",2501.17161,https://arxiv.org/abs/2501.17161,2026-06-03T20:52:25.867976+00:00,0
+2025-01,4,449,Multi-Agent Collaboration Mechanisms: A Survey of LLMs,2501.06322,https://arxiv.org/abs/2501.06322,2026-06-03T20:52:25.863587+00:00,0
+2025-01,5,448,UI-TARS: Pioneering Automated GUI Interaction with Native Agents,2501.12326,https://arxiv.org/abs/2501.12326,2026-06-03T20:52:25.866899+00:00,0
+2025-01,6,420,Search-o1: Agentic Search-Enhanced Large Reasoning Models,2501.05366,https://arxiv.org/abs/2501.05366,2026-06-03T20:52:25.863286+00:00,0
+2025-01,7,307,Agentic Retrieval-Augmented Generation: A Survey on Agentic RAG,2501.09136,https://arxiv.org/abs/2501.09136,2026-06-03T20:52:25.865650+00:00,0
+2025-01,8,232,Towards Large Reasoning Models: A Survey of Reinforced Reasoning with Large Language Models,2501.09686,https://arxiv.org/abs/2501.09686,2026-06-03T20:52:25.866080+00:00,0
+2025-01,9,167,MedXpertQA: Benchmarking Expert-Level Medical Reasoning and Understanding,2501.18362,https://arxiv.org/abs/2501.18362,2026-06-03T20:52:25.868447+00:00,0
+2025-01,10,99,Towards System 2 Reasoning in LLMs: Learning How to Think With Meta Chain-of-Thought,2501.04682,https://arxiv.org/abs/2501.04682,2026-06-03T20:52:25.863054+00:00,0
+2025-02,1,299,Towards an AI co-scientist,2502.18864,https://arxiv.org/abs/2502.18864,2026-06-04T12:02:33.317126+00:00,0
+2025-02,2,260,From System 1 to System 2: A Survey of Reasoning Large Language Models,2502.17419,https://arxiv.org/abs/2502.17419,2026-06-04T12:02:33.316863+00:00,0
+2025-02,3,175,CoT-Valve: Length-Compressible Chain-of-Thought Tuning,2502.09601,https://arxiv.org/abs/2502.09601,2026-06-04T12:02:33.315425+00:00,0
+2025-02,4,173,When More is Less: Understanding Chain-of-Thought Length in LLMs,2502.07266,https://arxiv.org/abs/2502.07266,2026-06-03T20:52:25.870639+00:00,0
+2025-02,5,168,ZebraLogic: On the Scaling Limits of LLMs for Logical Reasoning,2502.01100,https://arxiv.org/abs/2502.01100,2026-06-03T20:52:25.869187+00:00,0
+2025-02,6,164,EmbodiedBench: Comprehensive Benchmarking Multi-modal Large Language Models for Vision-Driven Embodied Agents,2502.09560,https://arxiv.org/abs/2502.09560,2026-06-04T12:02:33.315407+00:00,0
+2025-02,7,137,The Danger of Overthinking: Examining the Reasoning-Action Dilemma in Agentic Tasks,2502.08235,https://arxiv.org/abs/2502.08235,2026-06-04T12:02:33.315064+00:00,0
+2025-02,8,129,"LLMs Can Easily Learn to Reason from Demonstrations Structure, not content, is what matters!",2502.07374,https://arxiv.org/abs/2502.07374,2026-06-03T20:52:25.870677+00:00,0
+2025-02,9,121,AIDE: AI-Driven Exploration in the Space of Code,2502.13138,https://arxiv.org/abs/2502.13138,2026-06-04T12:02:33.316271+00:00,0
+2025-02,10,118,SafeChain: Safety of Language Models with Long Chain-of-Thought Reasoning Capabilities,2502.12025,https://arxiv.org/abs/2502.12025,2026-06-04T12:02:33.316043+00:00,0
+2025-03,1,386,Why Do Multi-Agent LLM Systems Fail?,2503.13657,https://arxiv.org/abs/2503.13657,2026-06-04T06:31:02.753938+00:00,0
+2025-03,2,319,Towards Reasoning Era: A Survey of Long Chain-of-Thought for Reasoning Large Language Models,2503.09567,https://arxiv.org/abs/2503.09567,2026-06-04T06:31:02.752838+00:00,0
+2025-03,3,290,R1-VL: Learning to Reason with Multimodal Large Language Models via Step-wise Group Relative Policy Optimization,2503.12937,https://arxiv.org/abs/2503.12937,2026-06-04T06:31:02.753744+00:00,0
+2025-03,4,234,R1-Searcher: Incentivizing the Search Capability in LLMs via Reinforcement Learning,2503.05592,https://arxiv.org/abs/2503.05592,2026-06-04T06:31:02.751616+00:00,0
+2025-03,5,232,Monitoring Reasoning Models for Misbehavior and the Risks of Promoting Obfuscation,2503.11926,https://arxiv.org/abs/2503.11926,2026-06-04T06:31:02.753470+00:00,0
+2025-03,6,169,Survey on Evaluation of LLM-based Agents,2503.16416,https://arxiv.org/abs/2503.16416,2026-06-04T06:31:02.754710+00:00,0
+2025-03,7,157,Empowering Edge Intelligence: A Comprehensive Survey on On-Device AI Models,2503.06027,https://arxiv.org/abs/2503.06027,2026-06-04T06:31:02.751702+00:00,0
+2025-03,8,151,"R1-Zero's ""Aha Moment"" in Visual Reasoning on a 2B Non-SFT Model",2503.05132,https://arxiv.org/abs/2503.05132,2026-06-04T06:31:02.751516+00:00,0
+2025-03,9,139,Chain-of-Thought Reasoning In The Wild Is Not Always Faithful,2503.08679,https://arxiv.org/abs/2503.08679,2026-06-04T06:31:02.752707+00:00,0
+2025-03,10,138,"Advances and Challenges in Foundation Agents: From Brain-Inspired Intelligence to Evolutionary, Collaborative, and Safe Systems",2504.01990,https://arxiv.org/abs/2504.01990,2026-06-04T06:31:02.757353+00:00,0
+2025-04,1,820,Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?,2504.13837,https://arxiv.org/abs/2504.13837,2026-06-04T06:31:04.910247+00:00,0
+2025-04,2,253,The AI Scientist-v2: Workshop-Level Automated Scientific Discovery via Agentic Tree Search,2504.08066,https://arxiv.org/abs/2504.08066,2026-06-04T06:31:04.908154+00:00,0
+2025-04,3,216,DeepResearcher: Scaling Deep Research via Reinforcement Learning in Real-world Environments,2504.03160,https://arxiv.org/abs/2504.03160,2026-06-04T06:31:04.905338+00:00,0
+2025-04,4,215,VAPO: Efficient and Reliable Reinforcement Learning for Advanced Reasoning Tasks,2504.05118,https://arxiv.org/abs/2504.05118,2026-06-04T06:31:04.906686+00:00,0
+2025-04,5,214,SmolVLM: Redefining small and efficient multimodal models,2504.05299,https://arxiv.org/abs/2504.05299,2026-06-04T06:31:04.906836+00:00,0
+2025-04,6,175,PaperBench: Evaluating AI's Ability to Replicate AI Research,2504.01848,https://arxiv.org/abs/2504.01848,2026-06-04T06:31:02.757263+00:00,0
+2025-04,7,162,Reasoning Models Can Be Effective Without Thinking,2504.09858,https://arxiv.org/abs/2504.09858,2026-06-04T06:31:04.908812+00:00,0
+2025-04,8,157,From LLM Reasoning to Autonomous AI Agents: A Comprehensive Review,2504.19678,https://arxiv.org/abs/2504.19678,2026-06-04T06:31:04.912321+00:00,0
+2025-04,9,150,Kimina-Prover Preview: Towards Large Formal Reasoning Models with Reinforcement Learning,2504.11354,https://arxiv.org/abs/2504.11354,2026-06-04T06:31:04.909250+00:00,0
+2025-04,10,136,Reasoning Models Know When They're Right: Probing Hidden States for Self-Verification,2504.05419,https://arxiv.org/abs/2504.05419,2026-06-04T06:31:04.906920+00:00,0
+2025-05,1,365,"AI Agents vs. Agentic AI: A Conceptual Taxonomy, Applications and Challenges",2505.10468,https://arxiv.org/abs/2505.10468,2026-06-03T20:42:22.453765+00:00,0
+2025-05,2,257,MathArena: Evaluating LLMs on Uncontaminated Math Competitions,2505.23281,https://arxiv.org/abs/2505.23281,2026-06-03T20:42:25.985260+00:00,0
+2025-05,3,130,ARC-AGI-2: A New Challenge for Frontier AI Reasoning Systems,2505.11831,https://arxiv.org/abs/2505.11831,2026-06-03T20:42:22.454701+00:00,0
+2025-05,4,118,OWL: Optimized Workforce Learning for General Multi-Agent Assistance in Real-World Task Automation,2505.23885,https://arxiv.org/abs/2505.23885,2026-06-03T20:42:25.985525+00:00,0
+2025-05,5,111,"A survey of agent interoperability protocols: Model Context Protocol (MCP), Agent Communication Protocol (ACP), Agent-to-Agent Protocol (A2A), and Agent Network Protocol (ANP)",2505.02279,https://arxiv.org/abs/2505.02279,2026-06-03T20:42:22.449480+00:00,0
+2025-05,6,107,Darwin Godel Machine: Open-Ended Evolution of Self-Improving Agents,2505.22954,https://arxiv.org/abs/2505.22954,2026-06-03T20:42:25.985132+00:00,0
+2025-05,7,99,Scaling Computer-Use Grounding via User Interface Decomposition and Synthesis,2505.13227,https://arxiv.org/abs/2505.13227,2026-06-03T20:42:22.455802+00:00,0
+2025-05,8,98,Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution,2505.20286,https://arxiv.org/abs/2505.20286,2026-06-03T20:42:25.983905+00:00,0
+2025-05,9,85,S-GRPO: Early Exit via Reinforcement Learning in Reasoning Models,2505.07686,https://arxiv.org/abs/2505.07686,2026-06-03T20:42:22.452494+00:00,0
+2025-05,10,78,SEED-GRPO: Semantic Entropy Enhanced GRPO for Uncertainty-Aware Policy Optimization,2505.12346,https://arxiv.org/abs/2505.12346,2026-06-03T20:42:22.455188+00:00,0
+2025-06,1,520,AlphaEvolve: A coding agent for scientific and algorithmic discovery,2506.13131,https://arxiv.org/abs/2506.13131,2026-06-04T12:02:43.642114+00:00,0
+2025-06,2,392,"V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning",2506.09985,https://arxiv.org/abs/2506.09985,2026-06-04T12:02:43.641307+00:00,0
+2025-06,3,380,The Illusion of Thinking: Understanding the Strengths and Limitations of Reasoning Models via the Lens of Problem Complexity,2506.06941,https://arxiv.org/abs/2506.06941,2026-06-04T12:02:43.640348+00:00,0
+2025-06,4,360,Your Brain on ChatGPT: Accumulation of Cognitive Debt when Using an AI Assistant for Essay Writing Task,2506.08872,https://arxiv.org/abs/2506.08872,2026-06-04T12:02:43.641162+00:00,0
+2025-06,5,265,Small Language Models are the Future of Agentic AI,2506.02153,https://arxiv.org/abs/2506.02153,2026-06-04T12:02:33.319396+00:00,0
+2025-06,6,257,$\tau^2$-Bench: Evaluating Conversational Agents in a Dual-Control Environment,2506.07982,https://arxiv.org/abs/2506.07982,2026-06-04T12:02:43.640967+00:00,0
+2025-06,7,193,Reinforcement Learning with Verifiable Rewards Implicitly Incentivizes Correct Reasoning in Base LLMs,2506.14245,https://arxiv.org/abs/2506.14245,2026-06-04T12:02:43.642498+00:00,0
+2025-06,8,180,Spurious Rewards: Rethinking Training Signals in RLVR,2506.10947,https://arxiv.org/abs/2506.10947,2026-06-04T12:02:43.641493+00:00,0
+2025-06,9,107,Hierarchical Reasoning Model,2506.21734,https://arxiv.org/abs/2506.21734,2026-06-04T12:02:54.328940+00:00,0
+2025-06,10,100,Deep Research Agents: A Systematic Examination And Roadmap,2506.18096,https://arxiv.org/abs/2506.18096,2026-06-04T12:02:43.643221+00:00,0
+2025-07,1,300,MedGemma Technical Report,2507.05201,https://arxiv.org/abs/2507.05201,2026-06-04T06:31:06.853323+00:00,0
+2025-07,2,154,Chain of Thought Monitorability: A New and Fragile Opportunity for AI Safety,2507.11473,https://arxiv.org/abs/2507.11473,2026-06-04T06:31:06.855678+00:00,0
+2025-07,3,128,MixGRPO: Unlocking Flow-based GRPO Efficiency with Mixed ODE-SDE,2507.21802,https://arxiv.org/abs/2507.21802,2026-06-04T06:31:09.185651+00:00,0
+2025-07,4,115,Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity,2507.09089,https://arxiv.org/abs/2507.09089,2026-06-04T06:31:06.854712+00:00,0
+2025-07,5,87,Does Math Reasoning Improve General LLM Capabilities? Understanding Transferability of LLM Reasoning,2507.00432,https://arxiv.org/abs/2507.00432,2026-06-04T06:31:04.914143+00:00,0
+2025-07,6,82,Seed-Prover: Deep and Broad Reasoning for Automated Theorem Proving,2507.23726,https://arxiv.org/abs/2507.23726,2026-06-04T06:31:09.186705+00:00,0
+2025-07,7,80,GTA1: GUI Test-time Scaling Agent,2507.05791,https://arxiv.org/abs/2507.05791,2026-06-04T06:31:06.853655+00:00,0
+2025-07,8,71,"A Survey of Self-Evolving Agents: What, When, How, and Where to Evolve on the Path to Artificial Super Intelligence",2507.21046,https://arxiv.org/abs/2507.21046,2026-06-04T06:31:09.184680+00:00,0
+2025-07,9,54,Winning Gold at IMO 2025 with a Model-Agnostic Verification-and-Refinement Pipeline,2507.15855,https://arxiv.org/abs/2507.15855,2026-06-04T06:31:06.857199+00:00,0
+2025-07,10,53,"When Chain of Thought is Necessary, Language Models Struggle to Evade Monitors",2507.05246,https://arxiv.org/abs/2507.05246,2026-06-04T06:31:06.853361+00:00,0
+2025-08,1,118,Mobile-Agent-v3: Fundamental Agents for GUI Automation,2508.15144,https://arxiv.org/abs/2508.15144,2026-06-04T06:31:11.598618+00:00,0
+2025-08,2,116,A Comprehensive Survey of Self-Evolving AI Agents: A New Paradigm Bridging Foundation Models and Lifelong Agentic Systems,2508.07407,https://arxiv.org/abs/2508.07407,2026-06-04T06:31:09.191481+00:00,0
+2025-08,3,87,OpenCUA: Open Foundations for Computer-Use Agents,2508.09123,https://arxiv.org/abs/2508.09123,2026-06-04T06:31:09.192404+00:00,0
+2025-08,4,75,MCP-Universe: Benchmarking Large Language Models with Real-World Model Context Protocol Servers,2508.14704,https://arxiv.org/abs/2508.14704,2026-06-04T06:31:11.598390+00:00,0
+2025-08,5,73,Reinforcement Learning with Rubric Anchors,2508.12790,https://arxiv.org/abs/2508.12790,2026-06-04T06:31:11.597239+00:00,0
+2025-08,6,61,Is Chain-of-Thought Reasoning of LLMs a Mirage? A Data Distribution Lens,2508.01191,https://arxiv.org/abs/2508.01191,2026-06-04T06:31:09.187427+00:00,0
+2025-08,7,60,Chain-of-Agents: End-to-End Agent Foundation Models via Multi-Agent Distillation and Agentic RL,2508.13167,https://arxiv.org/abs/2508.13167,2026-06-04T06:31:11.597519+00:00,0
+2025-08,8,45,OS Agents: A Survey on MLLM-based Agents for General Computing Devices Use,2508.04482,https://arxiv.org/abs/2508.04482,2026-06-04T06:31:09.189899+00:00,0
+2025-08,9,42,SEAgent: Self-Evolving Computer Use Agent with Autonomous Learning from Experience,2508.04700,https://arxiv.org/abs/2508.04700,2026-06-04T06:31:09.189992+00:00,0
+2025-08,10,42,Measuring the environmental impact of delivering AI at Google Scale,2508.15734,https://arxiv.org/abs/2508.15734,2026-06-04T06:31:11.599022+00:00,0
+2025-09,1,138,The Landscape of Agentic Reinforcement Learning for LLMs: A Survey,2509.02547,https://arxiv.org/abs/2509.02547,2026-06-04T06:31:11.603106+00:00,0
+2025-09,2,137,UI-TARS-2 Technical Report: Advancing GUI Agent with Multi-Turn Reinforcement Learning,2509.02544,https://arxiv.org/abs/2509.02544,2026-06-04T06:31:11.603093+00:00,0
+2025-09,3,116,ReasoningBank: Scaling Agent Self-Evolving with Reasoning Memory,2509.25140,https://arxiv.org/abs/2509.25140,2026-06-04T06:31:17.740615+00:00,0
+2025-09,4,87,Training Agents Inside of Scalable World Models,2509.24527,https://arxiv.org/abs/2509.24527,2026-06-04T06:31:17.740175+00:00,0
+2025-09,5,63,VerlTool: Towards Holistic Agentic Reinforcement Learning with Tool Use,2509.01055,https://arxiv.org/abs/2509.01055,2026-06-04T06:31:11.602642+00:00,0
+2025-09,6,56,Where LLM Agents Fail and How They can Learn From Failures,2509.25370,https://arxiv.org/abs/2509.25370,2026-06-04T06:31:17.740993+00:00,0
+2025-09,7,50,Stress Testing Deliberative Alignment for Anti-Scheming Training,2509.15541,https://arxiv.org/abs/2509.15541,2026-06-04T06:31:13.953237+00:00,0
+2025-09,8,41,Hilbert: Recursively Building Formal Proofs with Informal Reasoning,2509.22819,https://arxiv.org/abs/2509.22819,2026-06-04T06:31:17.738262+00:00,0
+2025-09,9,36,Emergent Hierarchical Reasoning in LLMs through Reinforcement Learning,2509.03646,https://arxiv.org/abs/2509.03646,2026-06-04T06:31:11.603420+00:00,0
+2025-09,10,35,The Illusion of Diminishing Returns: Measuring Long Horizon Execution in LLMs,2509.09677,https://arxiv.org/abs/2509.09677,2026-06-04T06:31:13.951556+00:00,0
+2025-10,1,72,"Agentic AI: A Comprehensive Survey of Architectures, Applications, and Future Directions",2510.25445,https://arxiv.org/abs/2510.25445,2026-06-04T06:31:36.166960+00:00,0
+2025-10,2,46,ACON: Optimizing Context Compression for Long-horizon LLM Agents,2510.00615,https://arxiv.org/abs/2510.00615,2026-06-04T06:31:17.743106+00:00,0
+2025-10,3,46,DeepAgent: A General Reasoning Agent with Scalable Toolsets,2510.21618,https://arxiv.org/abs/2510.21618,2026-06-04T06:31:36.164553+00:00,0
+2025-10,4,43,Agent Learning via Early Experience,2510.08558,https://arxiv.org/abs/2510.08558,2026-06-04T06:31:33.472989+00:00,0
+2025-10,5,43,VAGEN: Reinforcing World Model Reasoning for Multi-Turn VLM Agents,2510.16907,https://arxiv.org/abs/2510.16907,2026-06-04T06:31:33.476691+00:00,0
+2025-10,6,41,In-the-Flow Agentic System Optimization for Effective Planning and Tool Use,2510.05592,https://arxiv.org/abs/2510.05592,2026-06-04T06:31:33.471387+00:00,0
+2025-10,7,39,Aristotle: IMO-level Automated Theorem Proving,2510.01346,https://arxiv.org/abs/2510.01346,2026-06-04T06:31:17.743772+00:00,0
+2025-10,8,39,Barbarians at the Gate: How AI is Upending Systems Research,2510.06189,https://arxiv.org/abs/2510.06189,2026-06-04T06:31:33.471737+00:00,0
+2025-10,9,36,Multi-Agent Evolve: LLM Self-Improve through Co-evolution,2510.23595,https://arxiv.org/abs/2510.23595,2026-06-04T06:31:36.166028+00:00,0
+2025-10,10,35,Expected Attention: KV Cache Compression by Estimating Attention from Future Queries Distribution,2510.00636,https://arxiv.org/abs/2510.00636,2026-06-04T06:31:17.743187+00:00,0
+2025-11,1,218,Clustering-based Anomaly Detection in Multivariate Time Series Data,2511.08072,https://arxiv.org/abs/2511.08072,2026-06-04T06:31:42.464404+00:00,0
+2025-11,2,132,Multivariate Time series Anomaly Detection:A Framework of Hidden Markov Models,2511.07995,https://arxiv.org/abs/2511.07995,2026-06-04T06:31:42.464071+00:00,0
+2025-11,3,59,Natural Emergent Misalignment from Reward Hacking in Production RL,2511.18397,https://arxiv.org/abs/2511.18397,2026-06-04T06:31:45.761652+00:00,0
+2025-11,4,52,Kosmos: An AI Scientist for Autonomous Discovery,2511.02824,https://arxiv.org/abs/2511.02824,2026-06-04T06:31:36.169336+00:00,0
+2025-11,5,51,ResearchRubrics: A Benchmark of Prompts and Rubrics For Evaluating Deep Research Agents,2511.07685,https://arxiv.org/abs/2511.07685,2026-06-04T06:31:42.463473+00:00,0
+2025-11,6,44,DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning,2511.22570,https://arxiv.org/abs/2511.22570,2026-06-04T06:31:45.764792+00:00,0
+2025-11,7,32,A Multimodal Framework for Depression Detection during Covid-19 via Harvesting Social Media: A Novel Dataset and Method,2511.00424,https://arxiv.org/abs/2511.00424,2026-06-04T06:31:36.168326+00:00,0
+2025-11,8,28,Simulating Environments with Reasoning Models for Agent Training,2511.01824,https://arxiv.org/abs/2511.01824,2026-06-04T06:31:36.168911+00:00,0
+2025-11,9,26,SkyRL-Agent: Efficient RL Training for Multi-turn LLM Agent,2511.16108,https://arxiv.org/abs/2511.16108,2026-06-04T06:31:42.469684+00:00,0
+2025-11,10,26,OpenMMReasoner: Pushing the Frontiers for Multimodal Reasoning with an Open and General Recipe,2511.16334,https://arxiv.org/abs/2511.16334,2026-06-04T06:31:42.469850+00:00,0
+2025-12,1,77,Towards a Science of Scaling Agent Systems,2512.08296,https://arxiv.org/abs/2512.08296,2026-06-04T12:02:54.338816+00:00,0
+2025-12,2,46,Recursive Language Models,2512.24601,https://arxiv.org/abs/2512.24601,2026-06-04T12:02:56.681095+00:00,0
+2025-12,3,44,Three-way conflict analysis based on alliance and conflict functions,2512.21419,https://arxiv.org/abs/2512.21419,2026-06-04T12:02:56.680394+00:00,0
+2025-12,4,42,Three-way decision with incomplete information based on similarity and satisfiability,2512.21421,https://arxiv.org/abs/2512.21421,2026-06-04T12:02:56.680407+00:00,0
+2025-12,5,37,Reinforcement Learning for Self-Improving Agent with Skill Library,2512.17102,https://arxiv.org/abs/2512.17102,2026-06-04T12:02:56.679367+00:00,0
+2025-12,6,34,"Remember Me, Refine Me: A Dynamic Procedural Memory Framework for Experience-Driven Agent Evolution",2512.10696,https://arxiv.org/abs/2512.10696,2026-06-04T12:02:54.339783+00:00,0
+2025-12,7,32,Learning General Policies with Policy Gradient Methods,2512.19366,https://arxiv.org/abs/2512.19366,2026-06-04T12:02:56.679890+00:00,0
+2025-12,8,24,Guided Self-Evolving LLMs with Minimal Human Supervision,2512.02472,https://arxiv.org/abs/2512.02472,2026-06-04T12:02:54.336778+00:00,0
+2025-12,9,20,Evaluating Large Language Models in Scientific Discovery,2512.15567,https://arxiv.org/abs/2512.15567,2026-06-04T12:02:56.677962+00:00,0
+2025-12,10,19,MemVerse: Multimodal Memory for Lifelong Learning Agents,2512.03627,https://arxiv.org/abs/2512.03627,2026-06-04T12:02:54.337120+00:00,0

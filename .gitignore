@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Local citation database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Local Claude Code settings (machine-specific permission allowlist)
+.claude/
+
+# Generated public DB for the GitHub Pages site (built by build_public_db.py).
+# The static front-end (site/index.html, site/vendor/) IS committed.
+/site/db/

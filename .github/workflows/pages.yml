@@ -1,0 +1,64 @@
+name: Deploy site to GitHub Pages
+
+# Builds the static, browser-queryable site and publishes it to GitHub Pages.
+#
+# The source database (citations.db) is NOT in git — it lives as an asset on a
+# GitHub Release tagged `data`. To publish a fresh DB:
+#
+#     gh release create data citations.db   # first time
+#     gh release upload data citations.db --clobber && gh workflow run pages.yml
+#
+# Releasing (the first command) auto-triggers a deploy; thereafter, re-upload
+# the asset and dispatch the workflow (or just run it from the Actions tab).
+
+on:
+  workflow_dispatch:          # manual "rebuild now" from the Actions tab / gh CLI
+  release:
+    types: [published]        # publishing the `data` release triggers a build
+  push:
+    branches: [main]          # redeploy when the front-end or build script changes
+    paths:
+      - "site/index.html"
+      - "site/vendor/**"
+      - "build_public_db.py"
+      - ".github/workflows/pages.yml"
+
+permissions:
+  contents: read              # to download the release asset
+  pages: write                # to deploy
+  id-token: write             # required by deploy-pages
+
+# One deploy at a time; let an in-progress run finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Download citations.db from the `data` release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download data --pattern citations.db --output citations.db
+
+      - name: Build public DB + manifest
+        run: python build_public_db.py --src citations.db --out site/db
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arXiv — top papers</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📄</text></svg>">
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; padding: 1.5rem;
+         max-width: 1100px; margin-inline: auto; }
+  h1 { font-size: 1.3rem; margin: 0 0 1rem; }
+  .search { display: flex; gap: .5rem; margin-bottom: 1rem; }
+  .search input { flex: 1; font: inherit; padding: .5rem .6rem;
+                  border: 1px solid #888; border-radius: 4px; }
+  .search button { font: inherit; padding: .35rem .7rem; cursor: pointer;
+                   border: 1px solid #888; border-radius: 4px;
+                   background: transparent; }
+  .controls { display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;
+              margin-bottom: 1rem; }
+  .controls.dimmed { opacity: .4; pointer-events: none; }
+  .controls label { display: flex; flex-direction: column; font-size: .8rem;
+                    color: #777; gap: .25rem; }
+  select, input, .toggle button { font: inherit; padding: .35rem .5rem; }
+  .toggle button { border: 1px solid #888; background: transparent;
+                   cursor: pointer; }
+  .toggle button.active { background: #4060c0; color: #fff; border-color: #4060c0; }
+  .toggle button:not(:first-child) { border-left: none; }
+  .toggle button:first-child { border-radius: 4px 0 0 4px; }
+  .toggle button:last-child { border-radius: 0 4px 4px 0; }
+  .cats { display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; }
+  .cats label { flex-direction: row; align-items: center; gap: .3rem;
+                color: inherit; font-size: .9rem; cursor: pointer; }
+  .cats .count { color: #999; font-size: .8rem; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid #3333; }
+  th { font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; color: #777; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.active-metric { font-weight: 600; }
+  .authors { color: #888; font-size: .85rem; }
+  .authors .more { color: #4060c0; cursor: pointer; white-space: nowrap; }
+  .authors .more:hover { text-decoration: underline; }
+  .badge { font-size: .7rem; background: #c08040; color: #fff; padding: .05rem .35rem;
+           border-radius: 3px; margin-left: .4rem; vertical-align: middle; }
+  .muted { color: #999; }
+  #status { color: #999; margin: .5rem 0; }
+  footer { color: #999; font-size: .8rem; margin-top: 2rem; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<h1>arXiv — top papers</h1>
+<div class="search">
+  <input id="q" type="search" placeholder="Search by title or arXiv id / URL…"
+         autocomplete="off" disabled>
+  <button id="q-clear" hidden>Clear</button>
+</div>
+<div class="controls" id="controls">
+  <label>Granularity
+    <span class="toggle">
+      <button id="g-all" class="active">All time</button><button id="g-year">Year</button><button id="g-month">Month</button><button id="g-recent">Recent</button>
+    </span>
+  </label>
+  <label id="period-wrap">Period
+    <select id="period"></select>
+  </label>
+  <label>Rank by
+    <span class="toggle">
+      <button id="m-citations" class="active">Citations</button><button id="m-social">Hacker News</button>
+    </span>
+  </label>
+  <label>Top N
+    <input id="top" type="number" min="1" max="500" value="50" style="width:6rem">
+  </label>
+  <label>Categories
+    <span id="cats" class="cats"></span>
+  </label>
+</div>
+<div id="status"></div>
+<table>
+  <thead><tr>
+    <th>#</th><th>Cites</th><th>HN pts</th><th>Title</th><th>Category</th><th>Month</th><th>Updated</th>
+  </tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+<footer>
+  Queried entirely in your browser — the SQLite database is fetched on demand,
+  page by page, via <a href="https://github.com/phiresky/sql.js-httpvfs"
+  target="_blank" rel="noopener">sql.js-httpvfs</a>. No server.
+</footer>
+
+<!-- sql.js-httpvfs (UMD) exposes window.createDbWorker -->
+<script src="vendor/index.js"></script>
+<script>
+let granularity = "all";
+let metric = "citations";
+let periods = {months: [], years: [], latest: null};
+let categories = [];
+let worker = null;  // sql.js-httpvfs worker; db lives in worker.db
+
+// Provisional window + rolling windows mirror the Python report exactly.
+const PROVISIONAL_MONTHS = 3;
+const MAX_TOP = 500;
+
+// Rolling "recent" windows: [token, label, days]. Anchored to the data
+// frontier (newest paper), not today — matching the original server.
+const RECENT_WINDOWS = [
+  ["w", "Last week", 7],
+  ["1m", "Last month", 30],
+  ["2m", "Last 2 months", 60],
+  ["3m", "Last 3 months", 90],
+];
+const RECENT_DEFAULT = "1m";
+
+// Pull an arXiv id out of a bare id or a pasted /abs//pdf/ URL.
+const ARXIV_ID_RE = /\b(\d{4}\.\d{4,5})(?:v\d+)?\b/;
+
+const $ = (id) => document.getElementById(id);
+
+async function query(sql, params) {
+  return await worker.db.query(sql, params || []);
+}
+
+function fmtDate(iso) {
+  if (!iso) return "—";
+  return iso.slice(0, 10);
+}
+
+function monthIndex(ym) {
+  const [y, m] = ym.split("-").map(Number);
+  return y * 12 + (m - 1);
+}
+
+// today's absolute month minus PROVISIONAL_MONTHS (getUTCMonth is 0-based, so
+// it already equals month-1).
+function provisionalCutoff() {
+  const d = new Date();
+  return d.getUTCFullYear() * 12 + d.getUTCMonth() - PROVISIONAL_MONTHS;
+}
+
+// Resolve a rolling window (N days) to its [start, end] dates, anchored to the
+// data frontier. Returns null if the frontier is unknown.
+function windowRange(days) {
+  if (!periods.latest || !days) return null;
+  const end = new Date(periods.latest + "T00:00:00Z");
+  const start = new Date(end);
+  start.setUTCDate(start.getUTCDate() - days);
+  return {start: start.toISOString().slice(0, 10), end: periods.latest};
+}
+
+function setGranularity(g) {
+  granularity = g;
+  $("g-all").classList.toggle("active", g === "all");
+  $("g-year").classList.toggle("active", g === "year");
+  $("g-month").classList.toggle("active", g === "month");
+  $("g-recent").classList.toggle("active", g === "recent");
+  $("period-wrap").style.display = g === "all" ? "none" : "";
+  setMetricUI(g === "recent" ? "social" : "citations");
+  fillPeriods();
+  load();
+}
+
+function setMetricUI(m) {
+  metric = m;
+  $("m-citations").classList.toggle("active", m === "citations");
+  $("m-social").classList.toggle("active", m === "social");
+}
+
+function setMetric(m) {
+  setMetricUI(m);
+  refresh();
+}
+
+function fillPeriods() {
+  if (granularity === "all") return;
+  if (granularity === "recent") {
+    $("period").innerHTML = RECENT_WINDOWS
+      .map(([v, label]) => `<option value="${v}">${label}</option>`).join("");
+    $("period").value = RECENT_DEFAULT;
+    return;
+  }
+  const list = granularity === "month" ? periods.months : periods.years;
+  $("period").innerHTML = list.map((p) => `<option>${p}</option>`).join("");
+}
+
+function fillCategories() {
+  $("cats").innerHTML = categories.map((c) =>
+    `<label><input type="checkbox" class="cat" value="${c.category}" checked>` +
+    `${c.category} <span class="count">(${c.count.toLocaleString()})</span></label>`
+  ).join("");
+  document.querySelectorAll(".cat").forEach((cb) => { cb.onchange = load; });
+}
+
+function selectedCategories() {
+  return [...document.querySelectorAll(".cat:checked")].map((cb) => cb.value);
+}
+
+// Assign rank (by position), the arXiv URL, and the provisional flag — the
+// fields the Python endpoints added on top of the raw SQL rows.
+function shape(rows) {
+  const cutoff = provisionalCutoff();
+  return rows.map((r, i) => ({
+    rank: i + 1,
+    citation_count: r.citation_count,
+    score: r.score,
+    title: r.title,
+    authors: r.authors,
+    primary_category: r.primary_category,
+    month: r.month,
+    url: "https://arxiv.org/abs/" + r.arxiv_id,
+    fetched_at: r.fetched_at,
+    provisional: monthIndex(r.month) > cutoff,
+  }));
+}
+
+// Whether a category filter should be applied. The default is "all checked",
+// which we treat as no filter so the query uses the fast category-free index.
+function categoryClause(alias, cats, params) {
+  if (!cats.length || cats.length === categories.length) return "";
+  params.push(...cats);
+  return `${alias}.primary_category IN (${cats.map(() => "?").join(",")})`;
+}
+
+// all / YYYY / YYYY-MM: drive from the metric table so the top-k is read
+// straight from its (optionally category-scoped) index.
+function metricDrivenQuery(period, cats, top) {
+  const isCit = metric !== "social";
+  const drive = isCit ? "citations" : "social";
+  const a = isCit ? "c" : "s";
+  const value = isCit ? "c.citation_count" : "s.score";
+  const fetched = isCit ? "c.fetched_at" : "s.fetched_at";
+  const other = isCit
+    ? "LEFT JOIN social s ON s.arxiv_id = c.arxiv_id"
+    : "LEFT JOIN citations c ON c.arxiv_id = s.arxiv_id";
+
+  const params = [];
+  const clauses = [];
+  const cat = categoryClause(a, cats, params);
+  if (cat) clauses.push(cat);
+  if (period !== "all") {
+    if (/^\d{4}$/.test(period)) { clauses.push("p.month LIKE ?"); params.push(period + "-%"); }
+    else { clauses.push("p.month = ?"); params.push(period); }
+  }
+  const where = clauses.length ? "WHERE " + clauses.join(" AND ") : "";
+  const sql = `
+    SELECT p.arxiv_id, p.title, p.authors, p.month, p.primary_category,
+           c.citation_count AS citation_count, s.score AS score,
+           ${fetched} AS fetched_at
+    FROM ${drive} ${a}
+    JOIN papers p ON p.arxiv_id = ${a}.arxiv_id
+    ${other}
+    ${where}
+    ORDER BY ${value} DESC, ${a}.arxiv_id ASC
+    LIMIT ?`;
+  params.push(top);
+  return {sql, params};
+}
+
+// Rolling windows: drive from papers via the submitted_at index (a small,
+// recent slice), then sort that slice by the metric.
+function recentQuery(days, cats, top) {
+  const isCit = metric !== "social";
+  const value = isCit ? "c.citation_count" : "s.score";
+  const fetched = isCit ? "c.fetched_at" : "s.fetched_at";
+  const range = windowRange(days);
+
+  const params = [range ? range.start : "0000-00-00"];
+  const clauses = ["p.submitted_at >= ?"];
+  const cat = categoryClause("p", cats, params);
+  if (cat) clauses.push(cat);
+  clauses.push(`${value} IS NOT NULL`);
+  const sql = `
+    SELECT p.arxiv_id, p.title, p.authors, p.month, p.primary_category,
+           c.citation_count AS citation_count, s.score AS score,
+           ${fetched} AS fetched_at
+    FROM papers p
+    LEFT JOIN citations c ON c.arxiv_id = p.arxiv_id
+    LEFT JOIN social s ON s.arxiv_id = p.arxiv_id
+    WHERE ${clauses.join(" AND ")}
+    ORDER BY ${value} DESC, p.arxiv_id ASC
+    LIMIT ?`;
+  params.push(top);
+  return {sql, params};
+}
+
+async function load() {
+  const top = Math.max(1, Math.min(+($("top").value || 50), MAX_TOP));
+  const period = granularity === "all" ? "all" : $("period").value;
+  if (!period) { $("rows").innerHTML = ""; return; }
+  const cats = selectedCategories();
+  if (!cats.length) {
+    $("rows").innerHTML = "";
+    $("status").textContent = "Select at least one category.";
+    return;
+  }
+  $("status").textContent = "Loading…";
+  try {
+    let built;
+    if (granularity === "recent") {
+      const win = RECENT_WINDOWS.find(([v]) => v === period);
+      built = recentQuery(win ? win[2] : 30, cats, top);
+    } else {
+      built = metricDrivenQuery(period, cats, top);
+    }
+    const rows = shape(await query(built.sql, built.params));
+    render(rows);
+    const metricLabel = metric === "social" ? "Hacker News" : "citations";
+    let periodLabel;
+    if (granularity === "all") {
+      periodLabel = "all years";
+    } else if (granularity === "recent") {
+      const win = RECENT_WINDOWS.find(([v]) => v === period) || [, period, 0];
+      const range = windowRange(win[2]);
+      periodLabel = range
+        ? `${win[1]} (${range.start} → ${range.end})`
+        : win[1];
+    } else {
+      periodLabel = period;
+    }
+    const through = periods.latest ? ` — data through ${periods.latest}` : "";
+    $("status").textContent =
+      `${rows.length} papers — ${periodLabel} — by ${metricLabel} — ${cats.join(", ")}${through}`;
+  } catch (e) {
+    $("status").textContent = "Error: " + e.message;
+    $("rows").innerHTML = "";
+  }
+}
+
+function inSearch() {
+  return $("q").value.trim() !== "";
+}
+
+// Top N and metric apply in both modes; route to whichever view is active.
+function refresh() {
+  inSearch() ? runSearch() : load();
+}
+
+async function runSearch() {
+  const q = $("q").value.trim();
+  $("q-clear").hidden = !q;
+  $("controls").classList.toggle("dimmed", !!q);
+  if (!q) { load(); return; }
+  const top = Math.max(1, Math.min(+($("top").value || 50), MAX_TOP));
+  const isCit = metric !== "social";
+  const value = isCit ? "c.citation_count" : "s.score";
+  const fetched = isCit ? "c.fetched_at" : "s.fetched_at";
+  const cols = `p.arxiv_id, p.title, p.authors, p.month, p.primary_category,
+                c.citation_count AS citation_count, s.score AS score,
+                ${fetched} AS fetched_at`;
+  $("status").textContent = "Searching…";
+  try {
+    let sql, params;
+    const idMatch = q.match(ARXIV_ID_RE);
+    if (idMatch) {
+      sql = `SELECT ${cols}
+             FROM papers p
+             LEFT JOIN citations c ON c.arxiv_id = p.arxiv_id
+             LEFT JOIN social s ON s.arxiv_id = p.arxiv_id
+             WHERE p.arxiv_id = ? LIMIT ?`;
+      params = [idMatch[1], top];
+    } else {
+      // FTS prefix match: each alphanumeric token becomes a prefix term.
+      const terms = q.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+      if (!terms.length) {
+        render([]);
+        $("status").textContent = `No matches for “${q}”.`;
+        return;
+      }
+      const match = terms.map((t) => t + "*").join(" ");
+      sql = `SELECT ${cols}
+             FROM papers_fts f
+             JOIN papers p ON p.rowid = f.rowid
+             LEFT JOIN citations c ON c.arxiv_id = p.arxiv_id
+             LEFT JOIN social s ON s.arxiv_id = p.arxiv_id
+             WHERE papers_fts MATCH ?
+             ORDER BY ${value} IS NULL, ${value} DESC, p.arxiv_id ASC
+             LIMIT ?`;
+      params = [match, top];
+    }
+    const rows = shape(await query(sql, params));
+    render(rows);
+    const metricLabel = metric === "social" ? "Hacker News" : "citations";
+    $("status").textContent = rows.length
+      ? `${rows.length} match${rows.length === 1 ? "" : "es"} for “${q}” — by ${metricLabel}`
+      : `No matches for “${q}”.`;
+  } catch (e) {
+    $("status").textContent = "Error: " + e.message;
+    $("rows").innerHTML = "";
+  }
+}
+
+// Show only the first few authors; long lists get a click-to-expand "+N more".
+const AUTHOR_LIMIT = 3;
+function authorsHtml(s) {
+  if (!s) return "";
+  const list = s.split("; ");
+  if (list.length <= AUTHOR_LIMIT) return `<div class="authors">${s}</div>`;
+  const short = list.slice(0, AUTHOR_LIMIT).join("; ");
+  const rest = list.length - AUTHOR_LIMIT;
+  return `<div class="authors">`
+    + `<span class="auth-short">${short}; `
+    + `<a class="more" data-act="expand">+${rest} more</a></span>`
+    + `<span class="auth-full" hidden>${s} `
+    + `<a class="more" data-act="collapse">show less</a></span>`
+    + `</div>`;
+}
+
+function render(rows) {
+  const showProvisional = metric === "citations";
+  $("rows").innerHTML = rows.map((r) => {
+    const cites = r.citation_count == null
+      ? '<span class="muted">—</span>' : r.citation_count;
+    const score = r.score == null
+      ? '<span class="muted">—</span>' : r.score;
+    const badge = (showProvisional && r.provisional)
+      ? '<span class="badge" title="too recent for citations to accrue">provisional</span>'
+      : "";
+    const authors = authorsHtml(r.authors);
+    const citeCls = metric === "citations" ? "num active-metric" : "num";
+    const scoreCls = metric === "social" ? "num active-metric" : "num";
+    return `<tr>
+      <td class="num">${r.rank}</td>
+      <td class="${citeCls}">${cites}</td>
+      <td class="${scoreCls}">${score}</td>
+      <td><a href="${r.url}" target="_blank" rel="noopener">${r.title}</a>${badge}${authors}</td>
+      <td>${r.primary_category || ""}</td>
+      <td>${r.month}</td>
+      <td>${fmtDate(r.fetched_at)}</td>
+    </tr>`;
+  }).join("");
+}
+
+$("g-all").onclick = () => setGranularity("all");
+$("g-year").onclick = () => setGranularity("year");
+$("g-month").onclick = () => setGranularity("month");
+$("g-recent").onclick = () => setGranularity("recent");
+$("m-citations").onclick = () => setMetric("citations");
+$("m-social").onclick = () => setMetric("social");
+$("period").onchange = load;
+$("top").onchange = refresh;
+
+// Expand / collapse long author lists (delegated; #rows is rebuilt each render).
+$("rows").addEventListener("click", (e) => {
+  const a = e.target.closest("a.more");
+  if (!a) return;
+  e.preventDefault();
+  const wrap = a.closest(".authors");
+  const expand = a.dataset.act === "expand";
+  wrap.querySelector(".auth-short").hidden = expand;
+  wrap.querySelector(".auth-full").hidden = !expand;
+});
+
+// Debounced live search; changing the search box overrides the ranking view.
+let searchTimer;
+$("q").oninput = () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(runSearch, 200);
+};
+$("q-clear").onclick = () => {
+  $("q").value = "";
+  runSearch();
+  $("q").focus();
+};
+
+(async () => {
+  $("status").textContent = "Opening database…";
+  try {
+    // Absolute URLs: the worker resolves the wasm path relative to its own
+    // location, so a bare "vendor/…" would become "vendor/vendor/…".
+    const abs = (p) => new URL(p, location.href).href;
+    worker = await createDbWorker(
+      [{from: "jsonconfig", configUrl: abs("db/config.json")}],
+      abs("vendor/sqlite.worker.js"),
+      abs("vendor/sql-wasm.wasm"),
+    );
+    const meta = await (await fetch("db/meta.json")).json();
+    periods = {months: meta.months, years: meta.years, latest: meta.latest};
+    categories = meta.categories;
+    fillCategories();
+    $("q").disabled = false;
+    setGranularity("all");
+  } catch (e) {
+    $("status").textContent = "Failed to load database: " + e.message;
+  }
+})();
+</script>
+</body>
+</html>
