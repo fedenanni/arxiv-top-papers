@@ -268,6 +268,7 @@ def rank_period(
                 p.arxiv_id AS arxiv_id,
                 c.citation_count AS citation_count,
                 s.score AS score,
+                s.top_story_id AS top_story_id,
                 {fetched_sql} AS fetched_at,
                 ROW_NUMBER() OVER (
                     ORDER BY ({value_sql} IS NULL), {value_sql} DESC,
@@ -279,7 +280,7 @@ def rank_period(
             {where}
         )
         SELECT month, rnk, citation_count, score, title, authors,
-               primary_category, arxiv_id, fetched_at
+               primary_category, arxiv_id, top_story_id, fetched_at
         FROM ranked
         WHERE rnk <= ?
         ORDER BY rnk ASC
@@ -299,6 +300,7 @@ def rank_period(
                 "primary_category": r["primary_category"],
                 "arxiv_id": r["arxiv_id"],
                 "url": f"https://arxiv.org/abs/{r['arxiv_id']}",
+                "top_story_id": r["top_story_id"],
                 "fetched_at": r["fetched_at"],
                 "provisional": _month_index(r["month"]) > cutoff,
             }
@@ -350,6 +352,7 @@ def search_papers(
                 p.arxiv_id AS arxiv_id,
                 c.citation_count AS citation_count,
                 s.score AS score,
+                s.top_story_id AS top_story_id,
                 {fetched_sql} AS fetched_at,
                 ROW_NUMBER() OVER (
                     ORDER BY ({value_sql} IS NULL), {value_sql} DESC,
@@ -361,7 +364,7 @@ def search_papers(
             {where}
         )
         SELECT month, rnk, citation_count, score, title, authors,
-               primary_category, arxiv_id, fetched_at
+               primary_category, arxiv_id, top_story_id, fetched_at
         FROM ranked
         WHERE rnk <= ?
         ORDER BY rnk ASC
@@ -381,6 +384,7 @@ def search_papers(
                 "primary_category": r["primary_category"],
                 "arxiv_id": r["arxiv_id"],
                 "url": f"https://arxiv.org/abs/{r['arxiv_id']}",
+                "top_story_id": r["top_story_id"],
                 "fetched_at": r["fetched_at"],
                 "provisional": _month_index(r["month"]) > cutoff,
             }

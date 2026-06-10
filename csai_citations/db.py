@@ -48,7 +48,8 @@ CREATE TABLE IF NOT EXISTS social (
     arxiv_id        TEXT PRIMARY KEY REFERENCES papers(arxiv_id),
     score           REAL,               -- NULL = not yet fetched
     source          TEXT NOT NULL,      -- 'hn'
-    fetched_at      TEXT NOT NULL       -- ISO datetime of this score
+    fetched_at      TEXT NOT NULL,      -- ISO datetime of this score
+    top_story_id    TEXT                -- HN item id of the most-upvoted story
 );
 
 CREATE TABLE IF NOT EXISTS social_history (
@@ -72,8 +73,21 @@ def connect(db_path: str | Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.executescript(SCHEMA)
+    _migrate(conn)
     conn.commit()
     return conn
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    """Add columns introduced after a DB was first created.
+
+    `CREATE TABLE IF NOT EXISTS` leaves pre-existing tables untouched, so newly
+    added columns need an explicit ALTER. Each is guarded to be a no-op once the
+    column is present, keeping `connect()` idempotent.
+    """
+    cols = {row["name"] for row in conn.execute("PRAGMA table_info(social)")}
+    if "top_story_id" not in cols:
+        conn.execute("ALTER TABLE social ADD COLUMN top_story_id TEXT")
 
 
 def upsert_paper(
@@ -166,24 +180,31 @@ def upsert_social(
     score: float | None,
     source: str,
     fetched_at: str | None = None,
+    top_story_id: str | None = None,
 ) -> None:
     """Replace the current social score and append a history row.
 
     A NULL `score` means "not found" — it is stored, not dropped. Mirrors
     `upsert_citation` but writes the independent `social` / `social_history`
     tables, so refreshing one metric never disturbs the other.
+
+    `top_story_id` is the HN item id of the most-upvoted story behind the score,
+    used by the front-end to link straight to the busiest discussion. It lives
+    only on `social` (the current snapshot); `social_history` tracks the score
+    over time and doesn't need it.
     """
     fetched_at = fetched_at or now_iso()
     conn.execute(
         """
-        INSERT INTO social (arxiv_id, score, source, fetched_at)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO social (arxiv_id, score, source, fetched_at, top_story_id)
+        VALUES (?, ?, ?, ?, ?)
         ON CONFLICT(arxiv_id) DO UPDATE SET
-            score      = excluded.score,
-            source     = excluded.source,
-            fetched_at = excluded.fetched_at
+            score        = excluded.score,
+            source       = excluded.source,
+            fetched_at   = excluded.fetched_at,
+            top_story_id = excluded.top_story_id
         """,
-        (arxiv_id, score, source, fetched_at),
+        (arxiv_id, score, source, fetched_at, top_story_id),
     )
     conn.execute(
         """

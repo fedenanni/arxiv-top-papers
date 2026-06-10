@@ -235,19 +235,28 @@ def _refresh_openalex(
     conn.commit()
 
 
-def _hn_points(results: dict, arxiv_id: str) -> int:
+def _hn_points(results: dict, arxiv_id: str) -> tuple[int, str | None]:
     """Sum HN story points across hits that actually link this arXiv id.
 
     Algolia ranks by relevance and matches title text too, so we keep only hits
     whose URL contains the id — the strong signal that the story is about this
     paper — and sum their points.
+
+    Returns the points total and the `objectID` of the single highest-points
+    hit (the busiest discussion), or None if no hit links the id.
     """
     total = 0
+    top_points = -1
+    top_story_id: str | None = None
     for hit in results.get("hits", []):
         url = hit.get("url") or ""
         if arxiv_id in url:
-            total += hit.get("points") or 0
-    return total
+            points = hit.get("points") or 0
+            total += points
+            if points > top_points:
+                top_points = points
+                top_story_id = hit.get("objectID")
+    return total, top_story_id
 
 
 def _refresh_hackernews(
@@ -277,12 +286,13 @@ def _refresh_hackernews(
                         "tags": "story",
                     },
                 )
-                points = _hn_points(resp.json(), arxiv_id)
+                points, top_story_id = _hn_points(resp.json(), arxiv_id)
                 db.upsert_social(
                     conn,
                     arxiv_id=arxiv_id,
                     score=points,
                     source=SOURCE_HN,
+                    top_story_id=top_story_id,
                 )
                 # A real zero (no HN stories) is the paper's actual attention
                 # level, not an error — stored as 0. Report it as "not_found"

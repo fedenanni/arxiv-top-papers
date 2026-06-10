@@ -153,7 +153,7 @@ def import_dump(
             if not line:
                 continue
             scanned += 1
-            if bar:
+            if bar is not None:
                 bar.update(1)
             try:
                 record = json.loads(line)
@@ -199,7 +199,7 @@ def import_dump(
                 conn.commit()
 
     conn.commit()
-    if bar:
+    if bar is not None:
         bar.close()
     return ImportSummary(
         scanned=scanned,

@@ -277,15 +277,20 @@ function authorsHtml(s) {
 function render(rows) {
   // The "provisional" caveat is about citations not having accrued, so it only
   // applies when ranking by citations.
-  const showProvisional = metric === "citations";
   $("rows").innerHTML = rows.map((r) => {
     const cites = r.citation_count == null
       ? '<span class="muted">—</span>' : r.citation_count;
-    const score = r.score == null
-      ? '<span class="muted">—</span>' : r.score;
-    const badge = (showProvisional && r.provisional)
-      ? '<span class="badge" title="too recent for citations to accrue">provisional</span>'
-      : "";
+    // For the Hacker News metric, link the points to the busiest discussion
+    // thread (the most-upvoted story behind the score) when we have its id.
+    let score;
+    if (r.score == null) {
+      score = '<span class="muted">—</span>';
+    } else if (metric === "social" && r.top_story_id) {
+      score = `<a href="https://news.ycombinator.com/item?id=${r.top_story_id}"`
+        + ` target="_blank" rel="noopener" title="top HN discussion">${r.score}</a>`;
+    } else {
+      score = r.score;
+    }
     const authors = authorsHtml(r.authors);
     const citeCls = metric === "citations" ? "num active-metric" : "num";
     const scoreCls = metric === "social" ? "num active-metric" : "num";
@@ -293,7 +298,7 @@ function render(rows) {
       <td class="num">${r.rank}</td>
       <td class="${citeCls}">${cites}</td>
       <td class="${scoreCls}">${score}</td>
-      <td><a href="${r.url}" target="_blank" rel="noopener">${r.title}</a>${badge}${authors}</td>
+      <td><a href="${r.url}" target="_blank" rel="noopener">${r.title}</a>${authors}</td>
       <td>${r.primary_category || ""}</td>
       <td>${r.month}</td>
       <td>${fmtDate(r.fetched_at)}</td>
